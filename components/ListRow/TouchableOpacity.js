@@ -1,18 +1,27 @@
 // TouchableOpacity.js
 
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import {Platform, TouchableWithoutFeedback, Animated, ViewPropTypes} from 'react-native';
-import Easing from 'react-native/Libraries/Animated/src/Easing';
-import flattenStyle from 'react-native/Libraries/StyleSheet/flattenStyle';
+import {
+  Platform,
+  TouchableWithoutFeedback,
+  Animated,
+  ViewPropTypes,
+} from "react-native";
+import Easing from "react-native/Libraries/Animated/Easing";
+import flattenStyle from "react-native/Libraries/StyleSheet/flattenStyle";
 
-if (Platform.constants.reactNativeVersion.major === 0 && Platform.constants.reactNativeVersion.minor < 62) {
-  console.error('this teaset edition need react native 0.62.0 or above, please use teaset@0.7.1 in earlier version of react native');
+if (
+  Platform.constants.reactNativeVersion.major === 0 &&
+  Platform.constants.reactNativeVersion.minor < 62
+) {
+  console.error(
+    "this teaset edition need react native 0.62.0 or above, please use teaset@0.7.1 in earlier version of react native"
+  );
 }
 
 export default class TouchableOpacity extends Component {
-
   static propTypes = {
     ...TouchableWithoutFeedback.propTypes,
     activeOpacity: PropTypes.number,
@@ -32,9 +41,9 @@ export default class TouchableOpacity extends Component {
   }
 
   componentDidMount() {
-    import('react-native/Libraries/Pressability/Pressability.js')
-      .then(Pressability => this.initPressability(Pressability.default))
-      .catch(error => console.error(error));
+    import("react-native/Libraries/Pressability/Pressability.js")
+      .then((Pressability) => this.initPressability(Pressability.default))
+      .catch((error) => console.error(error));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -53,7 +62,7 @@ export default class TouchableOpacity extends Component {
       getLongPressDelayMS: () => {
         if (this.props.delayLongPress != null) {
           const maybeNumber = this.props.delayLongPress;
-          if (typeof maybeNumber === 'number') {
+          if (typeof maybeNumber === "number") {
             return maybeNumber;
           }
         }
@@ -62,35 +71,33 @@ export default class TouchableOpacity extends Component {
       getPressDelayMS: () => this.props.delayPressIn,
       getPressOutDelayMS: () => this.props.delayPressOut,
       getPressRectOffset: () => this.props.pressRetentionOffset,
-      onBlur: event => {
+      onBlur: (event) => {
         if (this.props.onBlur != null) {
           this.props.onBlur(event);
         }
       },
-      onFocus: event => {
+      onFocus: (event) => {
         if (this.props.onFocus != null) {
           this.props.onFocus(event);
         }
       },
-      onLongPress: event => this.touchableHandleLongPress(event),
-      onPress: event => this.touchableHandlePress(event),
-      onPressIn: event => {
+      onLongPress: (event) => this.touchableHandleLongPress(event),
+      onPress: (event) => this.touchableHandlePress(event),
+      onPressIn: (event) => {
         this._opacityActive(
-          event.dispatchConfig.registrationName === 'onResponderGrant'
-            ? 0
-            : 150,
+          event.dispatchConfig.registrationName === "onResponderGrant" ? 0 : 150
         );
         if (this.props.onPressIn != null) {
           this.props.onPressIn(event);
         }
       },
-      onPressOut: event => this.touchableHandleActivePressOut(event),
-      onPressMove: event => this.touchableHandleResponderMove(event),
+      onPressOut: (event) => this.touchableHandleActivePressOut(event),
+      onPressMove: (event) => this.touchableHandleResponderMove(event),
       onResponderTerminationRequest: () =>
         !this.props.rejectResponderTermination,
       onStartShouldSetResponder: () => !this.props.disabled,
     });
-    this.setState({pressability});
+    this.setState({ pressability });
   }
 
   measureInWindow(callback) {
@@ -101,8 +108,7 @@ export default class TouchableOpacity extends Component {
     this.refs.animatedView && this.refs.animatedView.measure(callback);
   }
 
-  touchableHandleResponderMove(event) {
-  }
+  touchableHandleResponderMove(event) {}
 
   touchableHandleActivePressOut(event) {
     this._opacityInactive(250);
@@ -145,11 +151,14 @@ export default class TouchableOpacity extends Component {
 
   _getChildStyleOpacityWithDefault() {
     const opacity = flattenStyle(this.props.style)?.opacity;
-    return typeof opacity === 'number' ? opacity : 1;
+    return typeof opacity === "number" ? opacity : 1;
   }
 
   render() {
-    const {onBlur, onFocus, ...eventHandlersWithoutBlurAndFocus} = this.state.pressability ? this.state.pressability.getEventHandlers() : {};
+    const { onBlur, onFocus, ...eventHandlersWithoutBlurAndFocus } = this.state
+      .pressability
+      ? this.state.pressability.getEventHandlers()
+      : {};
     return (
       <Animated.View
         accessible={this.props.accessible !== false}
@@ -164,7 +173,7 @@ export default class TouchableOpacity extends Component {
         accessibilityLiveRegion={this.props.accessibilityLiveRegion}
         accessibilityViewIsModal={this.props.accessibilityViewIsModal}
         accessibilityElementsHidden={this.props.accessibilityElementsHidden}
-        style={[this.props.style, {opacity: this.state.anim}]}
+        style={[this.props.style, { opacity: this.state.anim }]}
         nativeID={this.props.nativeID}
         testID={this.props.testID}
         onLayout={this.props.onLayout}
@@ -178,11 +187,11 @@ export default class TouchableOpacity extends Component {
         focusable={
           this.props.focusable !== false && this.props.onPress !== undefined
         }
-        ref='animatedView'
-        {...eventHandlersWithoutBlurAndFocus}>
+        ref="animatedView"
+        {...eventHandlersWithoutBlurAndFocus}
+      >
         {this.props.children}
       </Animated.View>
     );
   }
-
 }
